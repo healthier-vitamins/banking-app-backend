@@ -1,1 +1,1 @@
-# banking-app-backend
+# banking-app-java
