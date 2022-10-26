@@ -1,1 +1,1 @@
-# banking-app
+# banking-app-backend
