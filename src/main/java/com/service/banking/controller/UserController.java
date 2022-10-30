@@ -1,6 +1,7 @@
 package com.service.banking.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,8 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.service.banking.model.BankAccount;
+import com.service.banking.model.Customer;
 import com.service.banking.model.EditUser;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
@@ -73,24 +76,34 @@ public class UserController {
 		return ResponseEntity.ok().body(userService.findByUsername(username)); 
 	}
 
-//	@PostMapping("/user/save")
+//	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
+//	@PreAuthorize("hasAnyRole('ADMIN')")
+//	public ResponseEntity<User> saveUser(@RequestBody User user) {
+////		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//		if(user.getCustomer().getBankAcc().getAccCreationDate() == null || user.getCustomer().getBankAcc().getAccCreationDate() == "") {
+//			user.getCustomer().getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
+//		}
+//		return ResponseEntity.ok().body(userService.saveUser(user));
+//	}
+	
 	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
 	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> saveUser(@RequestBody User user) {
+	public ResponseEntity<User> saveUser(@RequestBody Customer cust) {
 //		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//		String currentDateInMilliS = DateFormatterUtil.currentDateInMilliS();
-//		System.out.println("[TERMINAL] -- " + currentDateInMilliS + " --");
-//		user.getCustomer().getBankAcc().setAccCreationDate(new Date(System.currentTimeMillis()).toString());
-		if(user.getCustomer().getBankAcc().getAccCreationDate() == null || user.getCustomer().getBankAcc().getAccCreationDate() == "") {
-			user.getCustomer().getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
-		}
+		
+		Role userRole = new Role(1l, "ROLE_USER");
+		
+		cust.getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
+		String encodedPw = passwordEncoder.encode("Aa@123"); 
+		User user = new User(null, cust.getCustFirstName(), cust.getCustFirstName() + "-user", encodedPw, cust, Arrays.asList(userRole));
+		
 		return ResponseEntity.ok().body(userService.saveUser(user));
 	}
 	
 	@PutMapping("/user/save-updated")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<User> saveUpdatedUser(@RequestBody User user) {
-		return ResponseEntity.ok().body(userService.saveUpdatedUser(user));
+		return ResponseEntity.ok().body(userService.saveUser(user));
 	}
 
 	@DeleteMapping("/user/delete/{id}")

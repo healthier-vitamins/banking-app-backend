@@ -42,14 +42,14 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 	@Override
 	public User saveUser(User user) {
 		System.out.println("[TERMINAL] -- saving user " + user.getUsername() + " --");
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
+//		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepo.save(user);
 	}
 	
-	public User saveUpdatedUser(User user) {
-		System.out.println("[TERMINAL] -- saving updated user " + user.getUsername() + " --");
-		return userRepo.save(user);
-	}
+//	public User saveUpdatedUser(User user) {
+//		System.out.println("[TERMINAL] -- saving updated user " + user.getUsername() + " --");
+//		return userRepo.save(user);
+//	}
 	
 	@Override
 	public User getUser(String username) {

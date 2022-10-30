@@ -61,7 +61,9 @@ public class FinalBankingApplication {
 			Role userRole = userService.saveRole(new Role(null, "ROLE_USER"));
 			Role adminRole = userService.saveRole(new Role(null, "ROLE_ADMIN"));
 //			
-			userService.saveUser(new User(null, "admin", "admin-user", "Aa@123", null, new ArrayList<>()));
+			String encodedPw = passwordEncoder().encode("Aa@123");
+			
+			userService.saveUser(new User(null, "admin", "admin-user", encodedPw, null, new ArrayList<>()));
 			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
 
 			// credit card
@@ -77,7 +79,7 @@ public class FinalBankingApplication {
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 //			BankAccount bankAcc1 = new BankAccount(null, "Current", 15000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
-			User user1 = new User(null, "user", "user-user", "Aa@123", cust1, new ArrayList<>());
+			User user1 = new User(null, "user", "user-user", encodedPw, cust1, new ArrayList<>());
 			user1 = userService.saveUser(user1);
 			userService.addRoleToUser("user-user", "ROLE_USER");
 			
