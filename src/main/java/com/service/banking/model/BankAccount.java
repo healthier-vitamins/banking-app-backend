@@ -29,17 +29,22 @@ public class BankAccount {
 	@Column(name = "account_creation_date")
 	private String accCreationDate;
 	
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "customer_id")
+	private Customer customer;
+	
 	public BankAccount() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public BankAccount(Long accId, String accType, Float accBal, String accCreationDate) {
+	public BankAccount(Long accId, String accType, Float accBal, String accCreationDate, Customer customer) {
 		super();
 		this.accId = accId;
 		this.accType = accType;
 		this.accBal = accBal;
 		this.accCreationDate = accCreationDate;
+		this.customer = customer;
 	}
 
 	public Long getAccId() {
@@ -74,9 +79,17 @@ public class BankAccount {
 		this.accCreationDate = accCreationDate;
 	}
 
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(accBal, accCreationDate, accId, accType);
+		return Objects.hash(accBal, accCreationDate, accId, accType, customer);
 	}
 
 	@Override
@@ -89,13 +102,14 @@ public class BankAccount {
 			return false;
 		BankAccount other = (BankAccount) obj;
 		return Objects.equals(accBal, other.accBal) && Objects.equals(accCreationDate, other.accCreationDate)
-				&& Objects.equals(accId, other.accId) && Objects.equals(accType, other.accType);
+				&& Objects.equals(accId, other.accId) && Objects.equals(accType, other.accType)
+				&& Objects.equals(customer, other.customer);
 	}
 
 	@Override
 	public String toString() {
 		return "BankAccount [accId=" + accId + ", accType=" + accType + ", accBal=" + accBal + ", accCreationDate="
-				+ accCreationDate + "]";
+				+ accCreationDate + ", customer=" + customer + "]";
 	}
-	
+
 }

@@ -52,14 +52,14 @@ public class FinalBankingApplication {
 		return args -> {
 			Role userRole = userService.saveRole(new Role("ROLE_USER"));
 			Role adminRole = userService.saveRole(new Role("ROLE_ADMIN"));
-			Set<Role> userRoleSet = new HashSet<Role>(); userRoleSet.add(userRole);
-			Set<Role> adminRoleSet = new HashSet<Role>(); adminRoleSet.add(adminRole);
+//			Set<Role> userRoleSet = new HashSet<Role>(); userRoleSet.add(userRole);
+//			Set<Role> adminRoleSet = new HashSet<Role>(); adminRoleSet.add(adminRole);
 //			
-			String encodedPw = passwordEncoder().encode("Aa@123");
+//			String encodedPw = passwordEncoder().encode("Aa@123");
 			
 			
-			userService.saveUser(new User(null, "admin", "admin-user", encodedPw, null, null));
-			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
+//			userService.saveUser(new User(null, "admin", "admin-user", encodedPw, null, null));
+//			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
 
 			// credit card
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2011-01-01 09:09:09:09"));
@@ -68,14 +68,14 @@ public class FinalBankingApplication {
 			
 			// home loan
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
-			BankAccount bankAcc1 = new BankAccount(null, "Current", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
+//			BankAccount bankAcc1 = new BankAccount(null, "Current", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 			
 			// car loan
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 //			BankAccount bankAcc1 = new BankAccount(null, "Current", 15000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
-			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
-			User user1 = new User(null, "user", "user-user", encodedPw, cust1, null);
-			user1 = userService.saveUser(user1);
+//			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
+//			User user1 = new User(null, "user", "user-user", encodedPw, cust1, null);
+//			user1 = userService.saveUser(user1);
 			
 			
 			

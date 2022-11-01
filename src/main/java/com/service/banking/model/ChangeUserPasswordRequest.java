@@ -2,18 +2,18 @@ package com.service.banking.model;
 
 import java.util.Objects;
 
-public class EditUser {
+public class ChangeUserPasswordRequest {
 	
 	private String username;
 	private String newPassword;
 	private String oldPassword;
 	
-	public EditUser() {
+	public ChangeUserPasswordRequest() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	
-	public EditUser(String username, String newPassword, String oldPassword) {
+	public ChangeUserPasswordRequest(String username, String newPassword, String oldPassword) {
 		super();
 		this.username = username;
 		this.newPassword = newPassword;
@@ -57,7 +57,7 @@ public class EditUser {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		EditUser other = (EditUser) obj;
+		ChangeUserPasswordRequest other = (ChangeUserPasswordRequest) obj;
 		return Objects.equals(newPassword, other.newPassword) && Objects.equals(oldPassword, other.oldPassword)
 				&& Objects.equals(username, other.username);
 	}

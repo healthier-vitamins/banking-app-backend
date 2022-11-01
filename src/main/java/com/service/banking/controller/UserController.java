@@ -39,7 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.banking.exception.RoleNotFoundException;
 import com.service.banking.model.BankAccount;
 import com.service.banking.model.Customer;
-import com.service.banking.model.EditUser;
+import com.service.banking.model.ChangeUserPasswordRequest;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.repo.UserRepo;
@@ -117,7 +117,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/user/change-password")
-	public ResponseEntity<Object> editUser(@RequestBody EditUser editUserCreds) {
+	public ResponseEntity<Object> editUser(@RequestBody ChangeUserPasswordRequest editUserCreds) {
 		User user;
 		user = userRepo.findByUsername(editUserCreds.getUsername());
 		if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
