@@ -37,21 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder);
 	}
 
-//	Archived
-//	@Bean
-//	public AuthenticationFailureHandler authenticationFailureHandler() {
-//		return new CustomAuthenticationFailureHandler();
-//	}
-//
-//	@Bean
-//	public AccessDeniedHandler accessDeniedHandler() {
-//		return new CustomAccessDeniedHandler();
-//	}
-//	
-//	@Autowired
-//	@Qualifier("delegatedAuthenticationEntryPoint")
-//	AuthenticationEntryPoint authEntryPoint;
-	
 	@Bean
 	@Override
 	public AuthenticationManager authenticationManagerBean() throws Exception {
@@ -64,12 +49,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.csrf().disable();
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		http.authorizeRequests().antMatchers("/api/token/refresh").permitAll();
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/user/all").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/user/delete/**").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/customer/save").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/customer/all").hasAnyAuthority("ROLE_ADMIN");
-		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/user/saved-updated").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/user/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.PUT, "/api/user/**").hasAnyAuthority("ROLE_ADMIN");
+		http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/bank-acc/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
 //		http.formLogin().failureHandler(authenticationFailureHandler());
 //		http.exceptionHandling().accessDeniedHandler(accessDeniedHandler());

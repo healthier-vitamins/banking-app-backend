@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.service.banking.exception.RoleNotFoundException;
@@ -27,13 +28,13 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 	@Autowired
 	private RoleRepo roleRepo;
 	
-//	@Autowired
-//	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepo.findByUsername(username);
-		if(user == null) throw new UsernameNotFoundException("[TERMINAL] -- " + username + " not found --");
+		if(user == null) throw new UsernameNotFoundException(username + " not found");
 		Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
 		user.getRole().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
@@ -46,18 +47,12 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 	}
 	
 	@Override
-	public User getUser(String username) {
-		System.out.println("[TERMINAL] -- fetching " + username + " --");
-		return userRepo.findByUsername(username);
-	}
-
-	@Override
 	public void deleteById(Long id) {
 		userRepo.deleteById(id);
 	}
 	
 	@Override
-	public List<User> getUsers() {
+	public List<User> getAllUsers() {
 		System.out.println("[TERMINAL] -- fetching all users --");
 		return userRepo.findAll();
 	}
@@ -72,7 +67,6 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 		return userRepo.findByUsername(username);
 	}
 	
-	// for init
 	@Override
 	public Role saveRole(Role role) {
 		System.out.println("[TERMINAL] -- saving role " + role.getName() + " --");
@@ -82,11 +76,18 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 	@Override
 	public void addRoleToUser(String username, String roleName) throws RoleNotFoundException {
 		User user = userRepo.findByUsername(username);
-		Optional<Role> role = roleRepo.findById(roleName);
+		Optional<Role> role = Optional.of(roleRepo.getByName(roleName));
 		if(role.isEmpty()) throw new RoleNotFoundException(roleName);
 		user.getRole().add(role.get());
 		userRepo.save(user);
-		System.out.println("[TERMINAL] -- added " + role.get() + " to user " + username + " --");
+		System.out.println("[TERMINAL] -- added " + role.get().getName() + " to user " + username + " --");
+	}
+
+	@Override
+	public User encodeAndSaveUser(User user) {
+		String encodedPw = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encodedPw);
+		return userRepo.save(user);
 	}
 
 }

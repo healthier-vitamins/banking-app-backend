@@ -5,7 +5,6 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +28,7 @@ public class BankAccount {
 	@Column(name = "account_creation_date")
 	private String accCreationDate;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "customer_id")
 	private Customer customer;
 	
@@ -111,5 +110,5 @@ public class BankAccount {
 		return "BankAccount [accId=" + accId + ", accType=" + accType + ", accBal=" + accBal + ", accCreationDate="
 				+ accCreationDate + ", customer=" + customer + "]";
 	}
-
+	
 }

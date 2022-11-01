@@ -49,7 +49,7 @@ import com.service.banking.utility.DateFormatterUtil;
 import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy.Definition.Undefined;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
@@ -61,66 +61,20 @@ public class UserController {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-
-	@GetMapping("/user/all")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<List<User>> getAllUsers() {
-		return ResponseEntity.ok().body(userService.getUsers());
-	}
 	
-//	@PreAuthorize("hasAnyRole('ADMIN')")
-	@GetMapping("/user/get/{id}")
-	public ResponseEntity<User> getById(@PathVariable Long id) {
-		return ResponseEntity.ok().body(userService.getUserById(id)); 
-	}
-	
-	@GetMapping("/user/get-username/{username}")
-	public ResponseEntity<User> getByUsername(@PathVariable String username) {
-		return ResponseEntity.ok().body(userService.getByUsername(username)); 
-	}
-
-//	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
-//	@PreAuthorize("hasAnyRole('ADMIN')")
-//	public ResponseEntity<User> saveUser(@RequestBody User user) {
-////		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//		if(user.getCustomer().getBankAcc().getAccCreationDate() == null || user.getCustomer().getBankAcc().getAccCreationDate() == "") {
-//			user.getCustomer().getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
-//		}
-//		return ResponseEntity.ok().body(userService.saveUser(user));
-//	}
-	
-	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> saveUser(@RequestBody Customer cust) {
-//		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-		
-		Role userRole = new Role("ROLE_USER");
-		Set<Role> roleSet = new HashSet<Role>(); roleSet.add(userRole);
-		
-		cust.getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
-		String encodedPw = passwordEncoder.encode("Aa@123"); 
-		User user = new User(null, cust.getCustFirstName(), cust.getCustFirstName() + "-user", encodedPw, cust, roleSet);
-		
-		return ResponseEntity.ok().body(userService.saveUser(user));
-	}
-	
-	@PutMapping("/user/save-updated")
+	@PutMapping("/save-updated")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<User> saveUpdatedUser(@RequestBody User user) {
 		return ResponseEntity.ok().body(userService.saveUser(user));
 	}
 
-	@DeleteMapping("/user/delete/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public void deleteById(@PathVariable Long id) {
-		userService.deleteById(id);
-	}
-	
-	@PostMapping("/user/change-password")
+	@PostMapping("/change-password")
 	public ResponseEntity<Object> editUser(@RequestBody ChangeUserPasswordRequest editUserCreds) {
-		User user;
-		user = userRepo.findByUsername(editUserCreds.getUsername());
+		User user = userRepo.findByUsername(editUserCreds.getUsername()); 
 		if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
+		// to add throws within service class
+		// surround all with try catch
+		
 //		String encodedOldPassword = passwordEncoder.encode(editUserCreds.getOldPassword());
 		if(passwordEncoder.matches(editUserCreds.getOldPassword(), user.getPassword())) {
 			user.setPassword(editUserCreds.getNewPassword());
@@ -142,7 +96,7 @@ public class UserController {
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refresh_token);
 				String username = decodedJWT.getSubject();
-				User user = userService.getUser(username);
+				User user = userService.getByUsername(username);
 				String access_token = JWT.create().withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
 						.withIssuer(request.getRequestURL().toString())
@@ -162,6 +116,7 @@ public class UserController {
 				Map<String, String> error = new HashMap<>();
 				error.put("error_message", e.getMessage());
 				response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+				response.setStatus(400);
 //				response.setContentType("application/json");
 				new ObjectMapper().writeValue(response.getOutputStream(), error);
 			}
@@ -171,23 +126,4 @@ public class UserController {
 		}
 	}
 	
-	// for commandLineRunner
-	@PostMapping("/role/save")
-	public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-		// to send back 201 instead of 200 to be precise since saving an item in db
-//		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-//		return ResponseEntity.created(uri).body(userService.saveRole(role ));
-		return ResponseEntity.ok().body(userService.saveRole(role));
-	}
-
-	@PostMapping("/role/attacher")
-	public ResponseEntity<?> addRoleToUser(@RequestBody String username, String roleName) {
-		try {
-			userService.addRoleToUser(username, roleName);
-		} catch (RoleNotFoundException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roleName + " not found");
-		}
-		return ResponseEntity.ok().build();
-	}
 }

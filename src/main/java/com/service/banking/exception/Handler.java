@@ -25,15 +25,9 @@ public class Handler {
 		// not spring security.
 		Map<String, String> error = new HashMap<>();
 		error.put("error", ex.getClass().getName());
-//		error.put("error_cause", ex.getCause().toString());
 		error.put("error_message", ex.getLocalizedMessage());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
 		
-//		try {
-//			
-//		} catch(Exception e) {
-//			return new ResponseEntity<>(e.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//		}
 	}
 	
 }

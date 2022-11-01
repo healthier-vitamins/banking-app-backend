@@ -1,7 +1,9 @@
 package com.service.banking;
 
-import java.util.HashSet;
-import java.util.Set;
+
+import java.sql.Date;
+
+import javax.swing.text.DateFormatter;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -14,8 +16,7 @@ import com.service.banking.model.BankAccount;
 import com.service.banking.model.Customer;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
-import com.service.banking.repo.CustomerRepo;
-import com.service.banking.service.OfferService;
+import com.service.banking.service.BankAccountService;
 import com.service.banking.service.UserService;
 import com.service.banking.utility.DateFormatterUtil;
 
@@ -48,19 +49,18 @@ public class FinalBankingApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(UserService userService, OfferService offerService) {
+	CommandLineRunner run(UserService userService, BankAccountService bankAccService) {
 		return args -> {
 			Role userRole = userService.saveRole(new Role("ROLE_USER"));
 			Role adminRole = userService.saveRole(new Role("ROLE_ADMIN"));
-//			Set<Role> userRoleSet = new HashSet<Role>(); userRoleSet.add(userRole);
-//			Set<Role> adminRoleSet = new HashSet<Role>(); adminRoleSet.add(adminRole);
-//			
-//			String encodedPw = passwordEncoder().encode("Aa@123");
 			
+			userService.encodeAndSaveUser(new User(0l, "admin", "admin-user", "Aa@123", null));
+			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
 			
-//			userService.saveUser(new User(null, "admin", "admin-user", encodedPw, null, null));
-//			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
-
+			Customer cust = new Customer(0l, "lionel", "tay", "singapore", "12345678", "lioneltay@gmail.com", null);
+			BankAccount bankAcc = new BankAccount(0l, "Savings", 10000f, DateFormatterUtil.currentDateInString(), cust);
+			bankAccService.saveBankAccAndUser(bankAcc);
+			
 			// credit card
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2011-01-01 09:09:09:09"));
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 5000f, DateFormatterUtil.convertDateStringToMillisString("2017-01-01 09:09:09:09"));
@@ -76,8 +76,6 @@ public class FinalBankingApplication {
 //			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
 //			User user1 = new User(null, "user", "user-user", encodedPw, cust1, null);
 //			user1 = userService.saveUser(user1);
-			
-			
 			
 		};
 	}
