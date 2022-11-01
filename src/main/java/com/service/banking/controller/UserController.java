@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +36,7 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.service.banking.exception.RoleNotFoundException;
 import com.service.banking.model.BankAccount;
 import com.service.banking.model.Customer;
 import com.service.banking.model.EditUser;
@@ -73,7 +76,7 @@ public class UserController {
 	
 	@GetMapping("/user/get-username/{username}")
 	public ResponseEntity<User> getByUsername(@PathVariable String username) {
-		return ResponseEntity.ok().body(userService.findByUsername(username)); 
+		return ResponseEntity.ok().body(userService.getByUsername(username)); 
 	}
 
 //	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
@@ -91,11 +94,12 @@ public class UserController {
 	public ResponseEntity<User> saveUser(@RequestBody Customer cust) {
 //		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		
-		Role userRole = new Role(1l, "ROLE_USER");
+		Role userRole = new Role("ROLE_USER");
+		Set<Role> roleSet = new HashSet<Role>(); roleSet.add(userRole);
 		
 		cust.getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
 		String encodedPw = passwordEncoder.encode("Aa@123"); 
-		User user = new User(null, cust.getCustFirstName(), cust.getCustFirstName() + "-user", encodedPw, cust, Arrays.asList(userRole));
+		User user = new User(null, cust.getCustFirstName(), cust.getCustFirstName() + "-user", encodedPw, cust, roleSet);
 		
 		return ResponseEntity.ok().body(userService.saveUser(user));
 	}
@@ -142,7 +146,7 @@ public class UserController {
 				String access_token = JWT.create().withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
 						.withIssuer(request.getRequestURL().toString())
-						.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+						.withClaim("roles", user.getRole().stream().map(Role::getName).collect(Collectors.toList()))
 						.sign(algorithm);
 				Map<String, String> tokens = new HashMap<>();
 				tokens.put("access_token", access_token);
@@ -177,8 +181,13 @@ public class UserController {
 	}
 
 	@PostMapping("/role/attacher")
-	public ResponseEntity<?> addRoleToUser(@RequestBody String username, String role) {
-		userService.addRoleToUser(username, role);
+	public ResponseEntity<?> addRoleToUser(@RequestBody String username, String roleName) {
+		try {
+			userService.addRoleToUser(username, roleName);
+		} catch (RoleNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(roleName + " not found");
+		}
 		return ResponseEntity.ok().build();
 	}
 }

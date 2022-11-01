@@ -28,7 +28,7 @@ public class BankAccount {
 
 	@Column(name = "account_creation_date")
 	private String accCreationDate;
-
+	
 	public BankAccount() {
 		super();
 		// TODO Auto-generated constructor stub

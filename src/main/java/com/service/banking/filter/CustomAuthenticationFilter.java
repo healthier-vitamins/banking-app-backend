@@ -1,6 +1,9 @@
 package com.service.banking.filter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +48,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 			throws AuthenticationException {
 		
 		// extract json from request
-		
 		// https://www.appsdeveloperblog.com/read-body-from-httpservletrequest-in-spring-filter/
 		// convert the request to bytes
 //		try {
@@ -85,8 +87,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 			} catch (IOException e) {
 				// replace with custom handlerexception
 				e.printStackTrace();
-//				response.setHeader("error", e.getMessage());
-//				response.setStatus(org.springframework.http.HttpStatus.FORBIDDEN.value());
 			}
 		}
 		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginCred.getUsername(), loginCred.getPassword()));
@@ -115,19 +115,13 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 				.withExpiresAt(new Date(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30)))
 				.withIssuer(request.getRequestURL().toString())
 				.sign(algorithm);
-//		response.setHeader("access_token", access_token);
-//		response.setHeader("refresh_token", refresh_token);
-//		Long userId = userService.getUser(user.getUsername()).getId();
-//		System.out.println("-----------------------------------------------");
-//		System.out.println(user.getUsername());
-//		System.out.println(userId);
-		Map<String, String> tokens = new HashMap<>();
-		tokens.put("access_token", access_token);
-		tokens.put("refresh_token", refresh_token);
-//		tokens.put("user", "1");
+		Map<String, String> responseBody = new HashMap<>();
+		responseBody.put("access_token", access_token);
+		responseBody.put("refresh_token", refresh_token);
+		responseBody.put("roles", Arrays.toString(user.getAuthorities().toArray()));
 		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 //		response.setContentType("application/json");
-		new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+		new ObjectMapper().writeValue(response.getOutputStream(), responseBody);
 		
 	}
 	

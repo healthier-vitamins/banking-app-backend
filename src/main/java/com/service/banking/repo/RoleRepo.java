@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.service.banking.model.Role;
 
 @Repository
-public interface RoleRepo extends JpaRepository<Role, Long>{
+public interface RoleRepo extends JpaRepository<Role, String>{
 
 	
 	@Query("select r from Role r where r.name = :name")
