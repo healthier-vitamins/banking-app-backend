@@ -53,7 +53,7 @@ public class FinalBankingApplication {
 			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
 			userService.addRoleToUser("admin-user", "ROLE_USER");
 			
-			Customer cust = new Customer(0l, "lionel", "tay", "singapore", "12345678", "lioneltay@gmail.com", null);
+			Customer cust = new Customer(0l, "user", "lastName", "singapore", "12345678", "lioneltay@gmail.com", null);
 			BankAccount bankAcc = new BankAccount(0l, "Savings", 10000f, DateFormatterUtil.currentDateInString(), cust);
 			bankAccService.saveBankAccAndUser(bankAcc);
 			
