@@ -1,14 +1,18 @@
 package com.service.banking.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.service.banking.exception.EmptyDatabaseException;
 import com.service.banking.exception.UsernameIsTakenException;
 import com.service.banking.model.BankAccount;
 import com.service.banking.service.BankAccountService;
@@ -31,5 +35,17 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Username taken");
 		}
 		return ResponseEntity.ok(savedBankAcc);
+	}
+	
+	@GetMapping("/get-all")
+	public ResponseEntity<?> getAllBankAcc() {
+		List<BankAccount> listOfBankAccs;
+		try {
+			listOfBankAccs = bankAccService.getAllBankAccounts();
+		} catch (EmptyDatabaseException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Database is empty");
+		}
+		return ResponseEntity.ok().body(listOfBankAccs);
 	}
 }

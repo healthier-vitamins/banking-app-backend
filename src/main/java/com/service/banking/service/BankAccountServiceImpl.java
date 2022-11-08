@@ -7,8 +7,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.service.banking.exception.EmptyDatabaseException;
 import com.service.banking.exception.UsernameIsTakenException;
 import com.service.banking.model.BankAccount;
 import com.service.banking.model.Role;
@@ -33,8 +36,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 	public BankAccount saveBankAccAndUser(BankAccount bankAcc) throws UsernameIsTakenException {
 		
 		if(isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user")) throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
-		
-		bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString());
+		if(Optional.of(bankAcc.getAccCreationDate()).isEmpty()) bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString()); 
 		BankAccount savedBankAcc = bankAccRepo.save(bankAcc);
 		Role role = roleRepo.getByName("ROLE_USER"); 
 		Set<Role> roleSet = new HashSet<Role>();
@@ -63,9 +65,10 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public List<BankAccount> getAllBankAccounts() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<BankAccount> getAllBankAccounts() throws EmptyDatabaseException {
+		Optional<List<BankAccount>> listOfBankAccs = Optional.of(bankAccRepo.findAll());
+		if(listOfBankAccs.isEmpty()) throw new EmptyDatabaseException();
+		return listOfBankAccs.get();
 	}
 
 	public boolean isUsernameTaken(String username) {
