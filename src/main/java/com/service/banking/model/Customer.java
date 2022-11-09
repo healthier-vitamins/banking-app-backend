@@ -12,12 +12,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 // Json serialize
 // https://stackoverflow.com/questions/15261456/how-do-i-disable-fail-on-empty-beans-in-jackson
@@ -26,10 +20,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 // creation and update timestamps annotations
 //https://stackoverflow.com/questions/42366763/hibernate-creationtimestamp-updatetimestamp-for-calendar
 
-@Entity 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Entity
 public class Customer {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "customer_id")
@@ -46,14 +40,17 @@ public class Customer {
 
 	@Column(name = "customer_phone")
 	private String custPhone;
+
+	@Column(name = "customer_email")
+	private String custEmail;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinColumn(name = "account_id")
-	private BankAccount bankAcc;
-	
+//	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//	@JoinColumn(name = "account_id")
+//	private BankAccount bankAcc;
+
 	// lazy collection == false
 //	https://stackoverflow.com/questions/4334970/hibernate-throws-multiplebagfetchexception-cannot-simultaneously-fetch-multipl
-	
+
 	// https://www.baeldung.com/hibernate-one-to-many
 //	@EqualsAndHashCode.Exclude
 //	@ToString.Exclude
@@ -61,26 +58,26 @@ public class Customer {
 //	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //	@JoinColumn(name = "offer_id")
 //	private Offer offer;
-	
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name="customer_id")
+
+//	@LazyCollection(LazyCollectionOption.FALSE)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "customer_id")
 	private List<Offer> offers;
-	
+
 	public Customer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	public Customer(Long custId, String custFirstName, String custLastName, String custCity, String custPhone,
-			BankAccount bankAcc, List<Offer> offers) {
+			String custEmail, List<Offer> offers) {
 		super();
 		this.custId = custId;
 		this.custFirstName = custFirstName;
 		this.custLastName = custLastName;
 		this.custCity = custCity;
 		this.custPhone = custPhone;
-		this.bankAcc = bankAcc;
+		this.custEmail = custEmail;
 		this.offers = offers;
 	}
 
@@ -124,12 +121,12 @@ public class Customer {
 		this.custPhone = custPhone;
 	}
 
-	public BankAccount getBankAcc() {
-		return bankAcc;
+	public String getCustEmail() {
+		return custEmail;
 	}
 
-	public void setBankAcc(BankAccount bankAcc) {
-		this.bankAcc = bankAcc;
+	public void setCustEmail(String custEmail) {
+		this.custEmail = custEmail;
 	}
 
 	public List<Offer> getOffers() {
@@ -142,7 +139,7 @@ public class Customer {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(bankAcc, custCity, custFirstName, custId, custLastName, custPhone, offers);
+		return Objects.hash(custCity, custEmail, custFirstName, custId, custLastName, custPhone, offers);
 	}
 
 	@Override
@@ -154,7 +151,7 @@ public class Customer {
 		if (getClass() != obj.getClass())
 			return false;
 		Customer other = (Customer) obj;
-		return Objects.equals(bankAcc, other.bankAcc) && Objects.equals(custCity, other.custCity)
+		return Objects.equals(custCity, other.custCity) && Objects.equals(custEmail, other.custEmail)
 				&& Objects.equals(custFirstName, other.custFirstName) && Objects.equals(custId, other.custId)
 				&& Objects.equals(custLastName, other.custLastName) && Objects.equals(custPhone, other.custPhone)
 				&& Objects.equals(offers, other.offers);
@@ -163,8 +160,8 @@ public class Customer {
 	@Override
 	public String toString() {
 		return "Customer [custId=" + custId + ", custFirstName=" + custFirstName + ", custLastName=" + custLastName
-				+ ", custCity=" + custCity + ", custPhone=" + custPhone + ", bankAcc=" + bankAcc + ", offers=" + offers
-				+ "]";
+				+ ", custCity=" + custCity + ", custPhone=" + custPhone + ", custEmail=" + custEmail + ", offers="
+				+ offers + "]";
 	}
-
+	
 }

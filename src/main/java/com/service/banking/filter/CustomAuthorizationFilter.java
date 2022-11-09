@@ -74,6 +74,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 //					errors.put("error_cause", e.getCause().toString());
 					errors.put("error_message", e.getMessage());
 					response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+					response.setStatus(504);
 //					response.setContentType("application/json");
 					new ObjectMapper().writeValue(response.getOutputStream(), errors);
 

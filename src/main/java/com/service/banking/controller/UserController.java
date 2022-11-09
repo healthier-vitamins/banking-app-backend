@@ -1,10 +1,13 @@
 package com.service.banking.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +36,10 @@ import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.service.banking.model.EditUser;
+import com.service.banking.exception.RoleNotFoundException;
+import com.service.banking.model.BankAccount;
+import com.service.banking.model.Customer;
+import com.service.banking.model.ChangeUserPasswordRequest;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.repo.UserRepo;
@@ -43,7 +49,7 @@ import com.service.banking.utility.DateFormatterUtil;
 import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy.Definition.Undefined;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 @CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
@@ -55,55 +61,20 @@ public class UserController {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-
-	@GetMapping("/user/all")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<List<User>> getAllUsers() {
-		return ResponseEntity.ok().body(userService.getUsers());
-	}
 	
-//	@PreAuthorize("hasAnyRole('ADMIN')")
-	@GetMapping("/user/get/{id}")
-	public ResponseEntity<User> getById(@PathVariable Long id) {
-		return ResponseEntity.ok().body(userService.getUserById(id)); 
-	}
-	
-	@GetMapping("/user/get-username/{username}")
-	public ResponseEntity<User> getByUsername(@PathVariable String username) {
-		return ResponseEntity.ok().body(userService.findByUsername(username)); 
-	}
-
-//	@PostMapping("/user/save")
-	@RequestMapping(method = {RequestMethod.POST, RequestMethod.PUT}, path = "/user/save")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> saveUser(@RequestBody User user) {
-//		ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-//		String currentDateInMilliS = DateFormatterUtil.currentDateInMilliS();
-//		System.out.println("[TERMINAL] -- " + currentDateInMilliS + " --");
-//		user.getCustomer().getBankAcc().setAccCreationDate(new Date(System.currentTimeMillis()).toString());
-		if(user.getCustomer().getBankAcc().getAccCreationDate() == null || user.getCustomer().getBankAcc().getAccCreationDate() == "") {
-			user.getCustomer().getBankAcc().setAccCreationDate(DateFormatterUtil.currentDateInString());
-		}
-		return ResponseEntity.ok().body(userService.saveUser(user));
-	}
-	
-	@PutMapping("/user/save-updated")
+	@PutMapping("/save-updated")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<User> saveUpdatedUser(@RequestBody User user) {
-		return ResponseEntity.ok().body(userService.saveUpdatedUser(user));
+		return ResponseEntity.ok().body(userService.saveUser(user));
 	}
 
-	@DeleteMapping("/user/delete/{id}")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public void deleteById(@PathVariable Long id) {
-		userService.deleteById(id);
-	}
-	
-	@PostMapping("/user/change-password")
-	public ResponseEntity<Object> editUser(@RequestBody EditUser editUserCreds) {
-		User user;
-		user = userRepo.findByUsername(editUserCreds.getUsername());
+	@PostMapping("/change-password")
+	public ResponseEntity<Object> editUser(@RequestBody ChangeUserPasswordRequest editUserCreds) {
+		User user = userRepo.findByUsername(editUserCreds.getUsername()); 
 		if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
+		// to add throws within service class
+		// surround all with try catch
+		
 //		String encodedOldPassword = passwordEncoder.encode(editUserCreds.getOldPassword());
 		if(passwordEncoder.matches(editUserCreds.getOldPassword(), user.getPassword())) {
 			user.setPassword(editUserCreds.getNewPassword());
@@ -125,11 +96,11 @@ public class UserController {
 				JWTVerifier verifier = JWT.require(algorithm).build();
 				DecodedJWT decodedJWT = verifier.verify(refresh_token);
 				String username = decodedJWT.getSubject();
-				User user = userService.getUser(username);
+				User user = userService.getByUsername(username);
 				String access_token = JWT.create().withSubject(user.getUsername())
 						.withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
 						.withIssuer(request.getRequestURL().toString())
-						.withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
+						.withClaim("roles", user.getRole().stream().map(Role::getName).collect(Collectors.toList()))
 						.sign(algorithm);
 				Map<String, String> tokens = new HashMap<>();
 				tokens.put("access_token", access_token);
@@ -145,6 +116,7 @@ public class UserController {
 				Map<String, String> error = new HashMap<>();
 				error.put("error_message", e.getMessage());
 				response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+				response.setStatus(400);
 //				response.setContentType("application/json");
 				new ObjectMapper().writeValue(response.getOutputStream(), error);
 			}
@@ -154,18 +126,4 @@ public class UserController {
 		}
 	}
 	
-	// for commandLineRunner
-	@PostMapping("/role/save")
-	public ResponseEntity<Role> saveRole(@RequestBody Role role) {
-		// to send back 201 instead of 200 to be precise since saving an item in db
-//		URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/role/save").toUriString());
-//		return ResponseEntity.created(uri).body(userService.saveRole(role ));
-		return ResponseEntity.ok().body(userService.saveRole(role));
-	}
-
-	@PostMapping("/role/attacher")
-	public ResponseEntity<?> addRoleToUser(@RequestBody String username, String role) {
-		userService.addRoleToUser(username, role);
-		return ResponseEntity.ok().build();
-	}
 }

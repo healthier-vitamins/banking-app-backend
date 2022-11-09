@@ -1,29 +1,17 @@
 package com.service.banking;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.service.banking.model.BankAccount;
 import com.service.banking.model.Customer;
-import com.service.banking.model.Offer;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
-import com.service.banking.repo.CustomerRepo;
-import com.service.banking.repo.OfferRepo;
-import com.service.banking.service.OfferService;
+import com.service.banking.service.BankAccountService;
 import com.service.banking.service.UserService;
 import com.service.banking.utility.DateFormatterUtil;
 
@@ -56,14 +44,23 @@ public class FinalBankingApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(UserService userService, OfferService offerService, CustomerRepo custRepo) {
+	CommandLineRunner run(UserService userService, BankAccountService bankAccService) {
 		return args -> {
-			Role userRole = userService.saveRole(new Role(null, "ROLE_USER"));
-			Role adminRole = userService.saveRole(new Role(null, "ROLE_ADMIN"));
-//			
-			userService.saveUser(new User(null, "admin", "admin-user", "Aa@123", null, new ArrayList<>()));
+			Role userRole = userService.saveRole(new Role("ROLE_USER"));
+			Role adminRole = userService.saveRole(new Role("ROLE_ADMIN"));
+			
+			userService.encodeAndSaveUser(new User(0l, "admin", "admin-user", "Aa@123", null));
 			userService.addRoleToUser("admin-user", "ROLE_ADMIN");
-
+			userService.addRoleToUser("admin-user", "ROLE_USER");
+			
+			Customer cust1 = new Customer(0l, "user", "lastName", "singapore", "12345678", "user@gmail.com", null);
+			BankAccount bankAcc1 = new BankAccount(0l, "Current", 10000f, DateFormatterUtil.currentDateInString(), cust1);
+			bankAccService.saveBankAccAndUser(bankAcc1);
+			
+			Customer cust2 = new Customer(0l, "user2", "lastName2", "malaysia", "87654321", "user2@gmail.com", null);
+			BankAccount bankAcc2 = new BankAccount(0l, "Savings", 5000f, DateFormatterUtil.formatCustomDate("2011-01-01 09:09:09:09"), cust2);
+			bankAccService.saveBankAccAndUser(bankAcc2);
+			
 			// credit card
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2011-01-01 09:09:09:09"));
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 5000f, DateFormatterUtil.convertDateStringToMillisString("2017-01-01 09:09:09:09"));
@@ -71,22 +68,14 @@ public class FinalBankingApplication {
 			
 			// home loan
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
-			BankAccount bankAcc1 = new BankAccount(null, "Current", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
+//			BankAccount bankAcc1 = new BankAccount(null, "Current", 7000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 			
 			// car loan
 //			BankAccount bankAcc1 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
 //			BankAccount bankAcc1 = new BankAccount(null, "Current", 15000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
-			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
-			User user1 = new User(null, "user", "user-user", "Aa@123", cust1, new ArrayList<>());
-			user1 = userService.saveUser(user1);
-			userService.addRoleToUser("user-user", "ROLE_USER");
-			
-//			BankAccount bankAcc2 = new BankAccount(null, "Savings", 10000f, DateFormatterUtil.convertDateStringToMillisString("2020-01-01 09:09:09:09"));
-//			BankAccount bankAcc2 = new BankAccount(null, "Savings", 5000f, DateFormatterUtil.convertDateStringToMillisString("2017-01-01 09:09:09:09"));
-//			Customer cust2 = new Customer(null, "fN", "lN", "city", "12345678", bankAcc2, null);
-//			User user2 = new User(null, "user", "user-user2", "123", cust2, new ArrayList<>(Arrays.asList(userRole)));
-//			user2 = userService.saveUser(user2);
-//			userService.addRoleToUser("user-user2", "ROLE_USER");
+//			Customer cust1 = new Customer(null, "firstName", "lastName", "city", "12345678", bankAcc1, null);
+//			User user1 = new User(null, "user", "user-user", encodedPw, cust1, null);
+//			user1 = userService.saveUser(user1);
 			
 		};
 	}
