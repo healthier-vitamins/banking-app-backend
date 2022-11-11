@@ -1,9 +1,6 @@
 package com.service.banking.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,15 +26,11 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.banking.model.LoginRequest;
-import com.service.banking.service.UserService;
 
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
-	
-	@Autowired
-	private UserService userService;
 	
 	public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
 		this.authenticationManager = authenticationManager;

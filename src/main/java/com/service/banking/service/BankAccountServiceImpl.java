@@ -1,14 +1,11 @@
 package com.service.banking.service;
 
-import java.sql.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.service.banking.exception.EmptyDatabaseException;

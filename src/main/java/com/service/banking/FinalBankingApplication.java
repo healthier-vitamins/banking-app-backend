@@ -16,7 +16,6 @@ import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.service.BankAccountService;
 import com.service.banking.service.UserService;
-import com.service.banking.utility.DateFormatterUtil;
 
 //@ServletComponentScan
 // was for AddResponseHeaderFilter from Baeldung
