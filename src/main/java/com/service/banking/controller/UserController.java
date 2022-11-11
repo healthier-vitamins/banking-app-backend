@@ -56,21 +56,26 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired
-	private UserRepo userRepo;
+//	@Autowired
+//	private UserRepo userRepo;
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
-	@PutMapping("/save-updated")
-	@PreAuthorize("hasAnyRole('ADMIN')")
-	public ResponseEntity<User> saveUpdatedUser(@RequestBody User user) {
-		return ResponseEntity.ok().body(userService.saveUser(user));
-	}
+//	@PutMapping("/save-updated")
+//	@PreAuthorize("hasAnyRole('ADMIN')")
+//	public ResponseEntity<User> saveUpdatedUser(@RequestBody User user) {
+//		return ResponseEntity.ok().body(userService.saveUser(user));
+//	}
 
+	@GetMapping("/get-user/{username}")
+	public ResponseEntity<User> getUser(@PathVariable String username) {
+		return ResponseEntity.ok(userService.getByUsername(username));
+	}
+	
 	@PostMapping("/change-password")
 	public ResponseEntity<Object> editUser(@RequestBody ChangeUserPasswordRequest editUserCreds) {
-		User user = userRepo.findByUsername(editUserCreds.getUsername()); 
+		User user = userService.getByUsername(editUserCreds.getUsername()); 
 		if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
 		// to add throws within service class
 		// surround all with try catch
@@ -80,7 +85,7 @@ public class UserController {
 			user.setPassword(editUserCreds.getNewPassword());
 			userService.saveUser(user);
 			System.out.println("[TERMINAL] -- Password changed for " + user.getUsername() + " --");
-			return ResponseEntity.ok().body(user);
+			return ResponseEntity.ok(user);
 		} else {
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Old password does not match");
 		}

@@ -28,12 +28,12 @@ public class BankAccountServiceImpl implements BankAccountService{
 	
 	@Autowired
 	private UserService userService;
-
+	
 	@Override
 	public BankAccount saveBankAccAndUser(BankAccount bankAcc) throws UsernameIsTakenException {
 		
 		if(isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user")) throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
-		if(Optional.of(bankAcc.getAccCreationDate()).isEmpty()) bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString()); 
+		if(bankAcc.getAccCreationDate() == null) bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString()); 
 		BankAccount savedBankAcc = bankAccRepo.save(bankAcc);
 		Role role = roleRepo.getByName("ROLE_USER"); 
 		Set<Role> roleSet = new HashSet<Role>();
