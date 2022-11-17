@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +48,15 @@ public class BankAccountController {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Database is empty");
 		}
 		return ResponseEntity.ok().body(listOfBankAccs);
+	}
+	
+	@PutMapping("/update-bank-acc")
+	public ResponseEntity<?> updateBankAcc(@RequestBody BankAccount bankAcc) {
+		try {
+			return ResponseEntity.ok(bankAccService.updateBankAcc(bankAcc));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getLocalizedMessage());
+		}
 	}
 }

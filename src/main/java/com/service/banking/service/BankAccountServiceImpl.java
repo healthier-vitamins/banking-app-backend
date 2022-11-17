@@ -45,8 +45,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public BankAccount updateBankAcc(BankAccount bankAcc) {
-		// TODO Auto-generated method stub
-		return null;
+		return bankAccRepo.save(bankAcc);
 	}
 
 	@Override
