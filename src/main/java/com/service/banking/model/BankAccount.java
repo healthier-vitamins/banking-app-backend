@@ -1,5 +1,7 @@
 package com.service.banking.model;
 
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -23,7 +25,7 @@ public class BankAccount {
 	private String accType;
 
 	@Column(name = "account_balance")
-	private Float accBal;
+	private String accBal;
 
 	@Column(name = "account_creation_date")
 	private String accCreationDate;
@@ -37,7 +39,7 @@ public class BankAccount {
 		// TODO Auto-generated constructor stub
 	}
 
-	public BankAccount(Long accId, String accType, Float accBal, String accCreationDate, Customer customer) {
+	public BankAccount(Long accId, String accType, String accBal, String accCreationDate, Customer customer) {
 		super();
 		this.accId = accId;
 		this.accType = accType;
@@ -62,11 +64,11 @@ public class BankAccount {
 		this.accType = accType;
 	}
 
-	public Float getAccBal() {
+	public String getAccBal() {
 		return accBal;
 	}
 
-	public void setAccBal(Float accBal) {
+	public void setAccBal(String accBal) {
 		this.accBal = accBal;
 	}
 
@@ -87,28 +89,9 @@ public class BankAccount {
 	}
 
 	@Override
-	public int hashCode() {
-		return Objects.hash(accBal, accCreationDate, accId, accType, customer);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BankAccount other = (BankAccount) obj;
-		return Objects.equals(accBal, other.accBal) && Objects.equals(accCreationDate, other.accCreationDate)
-				&& Objects.equals(accId, other.accId) && Objects.equals(accType, other.accType)
-				&& Objects.equals(customer, other.customer);
-	}
-
-	@Override
 	public String toString() {
 		return "BankAccount [accId=" + accId + ", accType=" + accType + ", accBal=" + accBal + ", accCreationDate="
 				+ accCreationDate + ", customer=" + customer + "]";
 	}
-	
+
 }

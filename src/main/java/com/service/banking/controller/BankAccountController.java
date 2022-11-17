@@ -1,6 +1,11 @@
 package com.service.banking.controller;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -52,6 +57,12 @@ public class BankAccountController {
 	
 	@PutMapping("/update-bank-acc")
 	public ResponseEntity<?> updateBankAcc(@RequestBody BankAccount bankAcc) {
+		BigDecimal tempBig = new BigDecimal(bankAcc.getAccBal());
+		Currency sgd = Currency.getInstance("SGD");
+		NumberFormat currency = DecimalFormat.getCurrencyInstance();
+		currency.setCurrency(sgd);
+//		System.out.println(Float.parseFloat(currency.format(bankAcc.getAccBal())));
+		bankAcc.setAccBal(currency.format(tempBig));
 		try {
 			return ResponseEntity.ok(bankAccService.updateBankAcc(bankAcc));
 		} catch (Exception e) {
