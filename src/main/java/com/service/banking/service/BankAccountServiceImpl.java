@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.service.banking.exception.BankAccIdNotFoundException;
 import com.service.banking.exception.EmptyDatabaseException;
 import com.service.banking.exception.UsernameIsTakenException;
 import com.service.banking.model.BankAccount;
@@ -49,9 +50,9 @@ public class BankAccountServiceImpl implements BankAccountService{
 	}
 
 	@Override
-	public void delBankAccAndUser(Long bankAccId) {
-		// TODO Auto-generated method stub
-		
+	public void delBankAccAndUser(Long bankAccId) throws BankAccIdNotFoundException {
+		if(!bankAccRepo.existsById(bankAccId)) throw new BankAccIdNotFoundException(bankAccId);
+		bankAccRepo.deleteById(bankAccId);
 	}
 
 	@Override
