@@ -31,6 +31,7 @@ public class BankAccountController {
 	private BankAccountService bankAccService;
 	
 	@PostMapping("/save-user")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> saveBankAccAndUser(@RequestBody BankAccount bankAcc) {
 		BankAccount savedBankAcc;
 		try {
@@ -43,6 +44,7 @@ public class BankAccountController {
 	}
 	
 	@GetMapping("/get-all")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> getAllBankAcc() {
 		List<BankAccount> listOfBankAccs;
 		try {
@@ -55,6 +57,7 @@ public class BankAccountController {
 	}
 	
 	@PutMapping("/update-bank-acc")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> updateBankAcc(@RequestBody BankAccount bankAcc) {
 		try {
 			return ResponseEntity.ok(bankAccService.updateBankAcc(bankAcc));
@@ -64,17 +67,16 @@ public class BankAccountController {
 		}
 	}
 	
-//	@PreAuthorize("hasAnyRole('ADMIN')")
 	@DeleteMapping("/del-bank-acc/{bankAccId}")
+	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> delBankAcc(@PathVariable Long bankAccId) {
-		System.out.println(bankAccId);
 		try {
 			bankAccService.delBankAccAndUser(bankAccId);
 			return ResponseEntity.ok().body(bankAccId + " deleted");
 		} catch (BankAccIdNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getLocalizedMessage());
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid bank account.");
 		}
 	}
 	
