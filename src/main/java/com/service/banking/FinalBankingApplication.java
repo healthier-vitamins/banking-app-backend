@@ -61,7 +61,7 @@ public class FinalBankingApplication {
 			
 			List<String> accTypes = Arrays.asList("Overseas", "Savings", "Savings", "Savings", "Savings", "Current", "Savings", "Current");
 			
-			List<String> accBals = Arrays.asList("SGD5000", "SGD10000", "SGD5000", "SGD7000", "SGD7000", "SGD7000", "SGD10000", "SGD15000");
+			List<String> accBals = Arrays.asList("5000", "10000", "5000", "7000", "7000", "7000", "10000", "15000");
 //			List<Float> accBals = Arrays.asList(5000f ,10000f, 5000f, 7000f, 7000f, 7000f, 10000f, 15000f);
 			List<String> accCreationDates = Arrays.asList("2022-01-01 09:09:09:09", "2011-01-01 09:09:09:09", "2017-01-01 09:09:09:09", "2020-01-01 09:09:09:09", "2020-01-01 09:09:09:09", "2020-01-01 09:09:09:09", "2020-01-01 09:09:09:09", "2020-01-01 09:09:09:09");
 			

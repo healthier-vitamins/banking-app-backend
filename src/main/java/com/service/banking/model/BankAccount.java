@@ -1,9 +1,5 @@
 package com.service.banking.model;
 
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Objects;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;

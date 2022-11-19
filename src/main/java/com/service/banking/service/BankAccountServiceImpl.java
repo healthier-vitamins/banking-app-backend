@@ -16,6 +16,7 @@ import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.repo.BankAccountRepo;
 import com.service.banking.repo.RoleRepo;
+import com.service.banking.utility.AccBalanceUtility;
 import com.service.banking.utility.DateFormatterUtil;
 
 @Service
@@ -35,6 +36,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 		
 		if(isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user")) throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
 		if(bankAcc.getAccCreationDate() == null) bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString()); 
+		String temp = AccBalanceUtility.formatAccBal(bankAcc.getAccBal());
+		bankAcc.setAccBal(temp);
 		BankAccount savedBankAcc = bankAccRepo.save(bankAcc);
 		Role role = roleRepo.getByName("ROLE_USER"); 
 		Set<Role> roleSet = new HashSet<Role>();
@@ -46,6 +49,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public BankAccount updateBankAcc(BankAccount bankAcc) {
+		String temp = AccBalanceUtility.formatAccBal(bankAcc.getAccBal());
+		bankAcc.setAccBal(temp);
 		return bankAccRepo.save(bankAcc);
 	}
 
@@ -53,6 +58,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 	public void delBankAccAndUser(Long bankAccId) throws BankAccIdNotFoundException {
 		if(!bankAccRepo.existsById(bankAccId)) throw new BankAccIdNotFoundException(bankAccId);
 		bankAccRepo.deleteById(bankAccId);
+//		userService.deleteById(bankAccId);
 	}
 
 	@Override

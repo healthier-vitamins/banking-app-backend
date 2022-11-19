@@ -1,14 +1,11 @@
 package com.service.banking.controller;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,12 +56,6 @@ public class BankAccountController {
 	
 	@PutMapping("/update-bank-acc")
 	public ResponseEntity<?> updateBankAcc(@RequestBody BankAccount bankAcc) {
-		BigDecimal tempBig = new BigDecimal(bankAcc.getAccBal());
-		Currency sgd = Currency.getInstance("SGD");
-		NumberFormat currency = DecimalFormat.getCurrencyInstance();
-		currency.setCurrency(sgd);
-//		System.out.println(Float.parseFloat(currency.format(bankAcc.getAccBal())));
-		bankAcc.setAccBal(currency.format(tempBig));
 		try {
 			return ResponseEntity.ok(bankAccService.updateBankAcc(bankAcc));
 		} catch (Exception e) {
@@ -73,14 +64,18 @@ public class BankAccountController {
 		}
 	}
 	
-//	@DeleteMapping("/del-bank-acc/{bankAccId}")
-//	public ResponseEntity<?> delBankAcc(@PathVariable Long bankAccId) {
-//		try {
-//			bankAccService.delBankAccAndUser(bankAccId);
-//		} catch (BankAccIdNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+//	@PreAuthorize("hasAnyRole('ADMIN')")
+	@DeleteMapping("/del-bank-acc/{bankAccId}")
+	public ResponseEntity<?> delBankAcc(@PathVariable Long bankAccId) {
+		System.out.println(bankAccId);
+		try {
+			bankAccService.delBankAccAndUser(bankAccId);
+			return ResponseEntity.ok().body(bankAccId + " deleted");
+		} catch (BankAccIdNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getLocalizedMessage());
+		}
+	}
 	
 }
