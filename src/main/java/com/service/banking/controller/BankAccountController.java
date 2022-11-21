@@ -74,10 +74,14 @@ public class BankAccountController {
 			bankAccService.delBankAccAndUser(bankAccId);
 			return ResponseEntity.ok().body(bankAccId + " deleted");
 		} catch (BankAccIdNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid bank account.");
 		}
+	}
+	
+	@GetMapping("/bank-acc-count")
+	public ResponseEntity<?> getBankAccCount() {
+		return ResponseEntity.ok(bankAccService.getBankAccCount());
 	}
 	
 }

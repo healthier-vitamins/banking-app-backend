@@ -88,4 +88,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 		}
 	}
 	
+	public Long getBankAccCount() {
+		return bankAccRepo.count();
+	}
+	
 }

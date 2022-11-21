@@ -72,6 +72,7 @@ public class FinalBankingApplication {
 				bankAccService.saveBankAccAndUser(bankAcc);
 			}
 			
+			
 //			Customer cust1 = new Customer(0l, "user", "lastName", "singapore", "12345678", "user@gmail.com", null);
 //			BankAccount bankAcc1 = new BankAccount(0l, "Current", 10000f, DateFormatterUtil.currentDateInString(), cust1);
 //			bankAccService.saveBankAccAndUser(bankAcc1);

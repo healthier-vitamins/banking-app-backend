@@ -14,4 +14,5 @@ public interface BankAccountService {
 	public void delBankAccAndUser(Long bankAccId) throws BankAccIdNotFoundException;
 	public BankAccount getBankAccountById(Long bankAccId);
 	public List<BankAccount> getAllBankAccounts() throws EmptyDatabaseException;
+	public Long getBankAccCount();
 }
