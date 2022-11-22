@@ -84,4 +84,9 @@ public class BankAccountController {
 		return ResponseEntity.ok(bankAccService.getBankAccCount());
 	}
 	
+	@GetMapping("/accs-created-over-lifetime")
+	public ResponseEntity<?> getAvgAccsCreated() {
+		return ResponseEntity.ok(bankAccService.getAvgAccsCreated());
+	}
+	
 }

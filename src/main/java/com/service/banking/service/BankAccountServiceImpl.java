@@ -20,29 +20,34 @@ import com.service.banking.utility.AccBalanceUtility;
 import com.service.banking.utility.DateFormatterUtil;
 
 @Service
-public class BankAccountServiceImpl implements BankAccountService{
-	
+public class BankAccountServiceImpl implements BankAccountService {
+
+	final private long BANK_LIFETIME = 11;
+
 	@Autowired
 	private BankAccountRepo bankAccRepo;
-	
+
 	@Autowired
 	private RoleRepo roleRepo;
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Override
 	public BankAccount saveBankAccAndUser(BankAccount bankAcc) throws UsernameIsTakenException {
-		
-		if(isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user")) throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
-		if(bankAcc.getAccCreationDate() == null) bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString()); 
+
+		if (isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user"))
+			throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
+		if (bankAcc.getAccCreationDate() == null)
+			bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString());
 		String temp = AccBalanceUtility.formatAccBal(bankAcc.getAccBal());
 		bankAcc.setAccBal(temp);
 		BankAccount savedBankAcc = bankAccRepo.save(bankAcc);
-		Role role = roleRepo.getByName("ROLE_USER"); 
+		Role role = roleRepo.getByName("ROLE_USER");
 		Set<Role> roleSet = new HashSet<Role>();
 		roleSet.add(role);
-		User user = new User(savedBankAcc.getAccId(), savedBankAcc.getCustomer().getCustFirstName(), savedBankAcc.getCustomer().getCustFirstName() + "-user", "Aa@123", roleSet);
+		User user = new User(savedBankAcc.getAccId(), savedBankAcc.getCustomer().getCustFirstName(),
+				savedBankAcc.getCustomer().getCustFirstName() + "-user", "Aa@123", roleSet);
 		userService.encodeAndSaveUser(user);
 		return savedBankAcc;
 	}
@@ -56,9 +61,10 @@ public class BankAccountServiceImpl implements BankAccountService{
 
 	@Override
 	public void delBankAccAndUser(Long bankAccId) throws BankAccIdNotFoundException {
-		if(!bankAccRepo.existsById(bankAccId)) throw new BankAccIdNotFoundException(bankAccId);
+		if (!bankAccRepo.existsById(bankAccId))
+			throw new BankAccIdNotFoundException(bankAccId);
 		bankAccRepo.deleteById(bankAccId);
-//		userService.deleteById(bankAccId);
+		userService.deleteById(bankAccId);
 	}
 
 	@Override
@@ -70,7 +76,8 @@ public class BankAccountServiceImpl implements BankAccountService{
 	@Override
 	public List<BankAccount> getAllBankAccounts() throws EmptyDatabaseException {
 		Optional<List<BankAccount>> listOfBankAccs = Optional.of(bankAccRepo.findAll());
-		if(listOfBankAccs.isEmpty()) throw new EmptyDatabaseException();
+		if (listOfBankAccs.isEmpty())
+			throw new EmptyDatabaseException();
 		return listOfBankAccs.get();
 	}
 
@@ -81,15 +88,20 @@ public class BankAccountServiceImpl implements BankAccountService{
 		} catch (Exception e) {
 			return false;
 		}
-		if(foundUser.isEmpty()) {
+		if (foundUser.isEmpty()) {
 			return false;
 		} else {
 			return true;
 		}
 	}
-	
+
 	public Long getBankAccCount() {
 		return bankAccRepo.count();
 	}
-	
+
+	public Long getAvgAccsCreated() {
+		long totalAccs = getBankAccCount();
+		return (long) Math.ceil((float) totalAccs / (float) BANK_LIFETIME);
+	}
+
 }

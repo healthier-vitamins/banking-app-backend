@@ -15,4 +15,5 @@ public interface BankAccountService {
 	public BankAccount getBankAccountById(Long bankAccId);
 	public List<BankAccount> getAllBankAccounts() throws EmptyDatabaseException;
 	public Long getBankAccCount();
+	public Long getAvgAccsCreated();
 }
