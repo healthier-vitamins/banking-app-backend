@@ -7,5 +7,5 @@ import com.service.banking.model.BankAccount;
 
 @Repository
 public interface BankAccountRepo extends JpaRepository<BankAccount, Long> {
-
+	
 }

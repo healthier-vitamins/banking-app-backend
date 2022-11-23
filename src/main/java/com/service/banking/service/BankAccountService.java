@@ -12,7 +12,7 @@ public interface BankAccountService {
 	public BankAccount saveBankAccAndUser(BankAccount bankAcc) throws UsernameIsTakenException;
 	public BankAccount updateBankAcc(BankAccount bankAcc);
 	public void delBankAccAndUser(Long bankAccId) throws BankAccIdNotFoundException;
-	public BankAccount getBankAccountById(Long bankAccId);
+	public BankAccount getBankAccountById(Long bankAccId) throws BankAccIdNotFoundException;
 	public List<BankAccount> getAllBankAccounts() throws EmptyDatabaseException;
 	public Long getBankAccCount();
 	public Long getAvgAccsCreated();

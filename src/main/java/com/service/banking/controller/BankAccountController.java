@@ -30,7 +30,7 @@ public class BankAccountController {
 	@Autowired
 	private BankAccountService bankAccService;
 	
-	@PostMapping("/save-user")
+	@PostMapping("/save-acc")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> saveBankAccAndUser(@RequestBody BankAccount bankAcc) {
 		BankAccount savedBankAcc;
@@ -56,7 +56,7 @@ public class BankAccountController {
 		return ResponseEntity.ok().body(listOfBankAccs);
 	}
 	
-	@PutMapping("/update-bank-acc")
+	@PutMapping("/update-acc")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> updateBankAcc(@RequestBody BankAccount bankAcc) {
 		try {
@@ -67,7 +67,7 @@ public class BankAccountController {
 		}
 	}
 	
-	@DeleteMapping("/del-bank-acc/{bankAccId}")
+	@DeleteMapping("/del-acc/{bankAccId}")
 	@PreAuthorize("hasAnyRole('ADMIN')")
 	public ResponseEntity<?> delBankAcc(@PathVariable Long bankAccId) {
 		try {
@@ -75,11 +75,11 @@ public class BankAccountController {
 			return ResponseEntity.ok().body(bankAccId + " deleted");
 		} catch (BankAccIdNotFoundException e) {
 			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid bank account.");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
 		}
 	}
 	
-	@GetMapping("/bank-acc-count")
+	@GetMapping("/count")
 	public ResponseEntity<?> getBankAccCount() {
 		return ResponseEntity.ok(bankAccService.getBankAccCount());
 	}
@@ -87,6 +87,16 @@ public class BankAccountController {
 	@GetMapping("/accs-created-over-lifetime")
 	public ResponseEntity<?> getAvgAccsCreated() {
 		return ResponseEntity.ok(bankAccService.getAvgAccsCreated());
+	}
+	
+	@GetMapping("/get-acc/{id}")
+	public ResponseEntity<?> getBankAccById(@PathVariable Long id) {
+		try {
+			return ResponseEntity.ok(bankAccService.getBankAccountById(id));
+		} catch (BankAccIdNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
+		}
 	}
 	
 }

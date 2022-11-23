@@ -37,6 +37,7 @@ import com.fasterxml.jackson.core.exc.StreamWriteException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.service.banking.exception.RoleNotFoundException;
+import com.service.banking.exception.UserUsernameNotFoundException;
 import com.service.banking.model.BankAccount;
 import com.service.banking.model.Customer;
 import com.service.banking.model.ChangeUserPasswordRequest;
@@ -69,16 +70,24 @@ public class UserController {
 //	}
 
 	@GetMapping("/get-user/{username}")
-	public ResponseEntity<User> getUser(@PathVariable String username) {
-		return ResponseEntity.ok(userService.getByUsername(username));
+	public ResponseEntity<?> getUser(@PathVariable String username) {
+		try {
+			return ResponseEntity.ok(userService.getByUsername(username));
+		} catch (UserUsernameNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
+		}
 	}
 	
 	@PostMapping("/change-password")
 	public ResponseEntity<Object> editUser(@RequestBody ChangeUserPasswordRequest editUserCreds) {
-		User user = userService.getByUsername(editUserCreds.getUsername()); 
-		if(user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
-		// to add throws within service class
-		// surround all with try catch
+		User user;
+		try {
+			user = userService.getByUsername(editUserCreds.getUsername());
+		} catch (UserUsernameNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username not found");
+		}
 		
 //		String encodedOldPassword = passwordEncoder.encode(editUserCreds.getOldPassword());
 		if(passwordEncoder.matches(editUserCreds.getOldPassword(), user.getPassword())) {

@@ -68,9 +68,10 @@ public class BankAccountServiceImpl implements BankAccountService {
 	}
 
 	@Override
-	public BankAccount getBankAccountById(Long bankAccId) {
-		// TODO Auto-generated method stub
-		return null;
+	public BankAccount getBankAccountById(Long bankAccId) throws BankAccIdNotFoundException {
+		Optional<BankAccount> bankAcc = bankAccRepo.findById(bankAccId);
+		if(bankAcc.isEmpty()) throw new BankAccIdNotFoundException(bankAccId);
+		return bankAcc.get();
 	}
 
 	@Override
@@ -103,5 +104,6 @@ public class BankAccountServiceImpl implements BankAccountService {
 		long totalAccs = getBankAccCount();
 		return (long) Math.ceil((float) totalAccs / (float) BANK_LIFETIME);
 	}
+
 
 }

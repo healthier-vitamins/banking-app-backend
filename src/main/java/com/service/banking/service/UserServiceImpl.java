@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.service.banking.exception.RoleNotFoundException;
+import com.service.banking.exception.UserUsernameNotFoundException;
 import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.repo.RoleRepo;
@@ -63,8 +64,10 @@ public class UserServiceImpl implements UserService, UserDetailsService{
 	}
 	
 	@Override
-	public User getByUsername(String username) {
-		return userRepo.findByUsername(username);
+	public User getByUsername(String username) throws UserUsernameNotFoundException{
+		Optional<User> user = Optional.of(userRepo.findByUsername(username));
+		if(user.isEmpty()) throw new UserUsernameNotFoundException(username);
+		return user.get();
 	}
 	
 	@Override
