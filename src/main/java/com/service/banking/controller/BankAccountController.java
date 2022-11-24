@@ -89,10 +89,10 @@ public class BankAccountController {
 		return ResponseEntity.ok(bankAccService.getAvgAccsCreated());
 	}
 	
-	@GetMapping("/get-acc/{id}")
-	public ResponseEntity<?> getBankAccById(@PathVariable Long id) {
+	@GetMapping("/get-acc/{bankAccId}")
+	public ResponseEntity<?> getBankAccById(@PathVariable Long bankAccId) {
 		try {
-			return ResponseEntity.ok(bankAccService.getBankAccountById(id));
+			return ResponseEntity.ok(bankAccService.getBankAccountById(bankAccId));
 		} catch (BankAccIdNotFoundException e) {
 			e.printStackTrace();
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
