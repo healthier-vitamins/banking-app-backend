@@ -45,7 +45,7 @@ import com.service.banking.model.Role;
 import com.service.banking.model.User;
 import com.service.banking.repo.UserRepo;
 import com.service.banking.service.UserService;
-import com.service.banking.utility.DateFormatterUtil;
+import com.service.banking.utility.DateFormatterUtility;
 
 import net.bytebuddy.dynamic.loading.PackageDefinitionStrategy.Definition.Undefined;
 

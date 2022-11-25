@@ -17,7 +17,7 @@ import com.service.banking.model.User;
 import com.service.banking.repo.BankAccountRepo;
 import com.service.banking.repo.RoleRepo;
 import com.service.banking.utility.AccBalanceUtility;
-import com.service.banking.utility.DateFormatterUtil;
+import com.service.banking.utility.DateFormatterUtility;
 
 @Service
 public class BankAccountServiceImpl implements BankAccountService {
@@ -39,7 +39,7 @@ public class BankAccountServiceImpl implements BankAccountService {
 		if (isUsernameTaken(bankAcc.getCustomer().getCustFirstName() + "-user"))
 			throw new UsernameIsTakenException(bankAcc.getCustomer().getCustFirstName() + "-user");
 		if (bankAcc.getAccCreationDate() == null)
-			bankAcc.setAccCreationDate(DateFormatterUtil.currentDateInString());
+			bankAcc.setAccCreationDate(DateFormatterUtility.currentDateInString());
 		String temp = AccBalanceUtility.formatAccBal(bankAcc.getAccBal());
 		bankAcc.setAccBal(temp);
 		BankAccount savedBankAcc = bankAccRepo.save(bankAcc);

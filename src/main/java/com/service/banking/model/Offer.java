@@ -24,19 +24,19 @@ public class Offer {
 	private String offerName;
 
 	@Column(name = "loan_amnt")
-	private Float loanAmnt;
+	private String loanAmnt;
 
 	@Column(name = "interest_rate_percent")
-	private Float interestRatePercent;
+	private String interestRatePercent;
 
 	@Column(name = "interest_free_withdraw")
-	private Float interestFreeCashWithdrawal;
+	private String interestFreeCashWithdrawal;
 
 	@Column(name = "annual_fee")
-	private Float annualFee;
+	private String annualFee;
 
 	@Column(name = "preclosure_charges")
-	private Float preclosureCharges;
+	private String preclosureCharges;
 
 	// lazy collection == false
 //		https://stackoverflow.com/questions/4334970/hibernate-throws-multiplebagfetchexception-cannot-simultaneously-fetch-multipl
@@ -54,8 +54,8 @@ public class Offer {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Offer(Long offerId, String offerName, Float loanAmnt, Float interestRatePercent,
-			Float interestFreeCashWithdrawal, Float annualFee, Float preclosureCharges, Long custId) {
+	public Offer(Long offerId, String offerName, String loanAmnt, String interestRatePercent,
+			String interestFreeCashWithdrawal, String annualFee, String preclosureCharges, Long custId) {
 		super();
 		this.offerId = offerId;
 		this.offerName = offerName;
@@ -83,43 +83,43 @@ public class Offer {
 		this.offerName = offerName;
 	}
 
-	public Float getLoanAmnt() {
+	public String getLoanAmnt() {
 		return loanAmnt;
 	}
 
-	public void setLoanAmnt(Float loanAmnt) {
+	public void setLoanAmnt(String loanAmnt) {
 		this.loanAmnt = loanAmnt;
 	}
 
-	public Float getInterestRatePercent() {
+	public String getInterestRatePercent() {
 		return interestRatePercent;
 	}
 
-	public void setInterestRatePercent(Float interestRatePercent) {
+	public void setInterestRatePercent(String interestRatePercent) {
 		this.interestRatePercent = interestRatePercent;
 	}
 
-	public Float getInterestFreeCashWithdrawal() {
+	public String getInterestFreeCashWithdrawal() {
 		return interestFreeCashWithdrawal;
 	}
 
-	public void setInterestFreeCashWithdrawal(Float interestFreeCashWithdrawal) {
+	public void setInterestFreeCashWithdrawal(String interestFreeCashWithdrawal) {
 		this.interestFreeCashWithdrawal = interestFreeCashWithdrawal;
 	}
 
-	public Float getAnnualFee() {
+	public String getAnnualFee() {
 		return annualFee;
 	}
 
-	public void setAnnualFee(Float annualFee) {
+	public void setAnnualFee(String annualFee) {
 		this.annualFee = annualFee;
 	}
 
-	public Float getPreclosureCharges() {
+	public String getPreclosureCharges() {
 		return preclosureCharges;
 	}
 
-	public void setPreclosureCharges(Float preclosureCharges) {
+	public void setPreclosureCharges(String preclosureCharges) {
 		this.preclosureCharges = preclosureCharges;
 	}
 
@@ -129,29 +129,6 @@ public class Offer {
 
 	public void setCustId(Long custId) {
 		this.custId = custId;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(annualFee, custId, interestFreeCashWithdrawal, interestRatePercent, loanAmnt, offerId,
-				offerName, preclosureCharges);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Offer other = (Offer) obj;
-		return Objects.equals(annualFee, other.annualFee) && Objects.equals(custId, other.custId)
-				&& Objects.equals(interestFreeCashWithdrawal, other.interestFreeCashWithdrawal)
-				&& Objects.equals(interestRatePercent, other.interestRatePercent)
-				&& Objects.equals(loanAmnt, other.loanAmnt) && Objects.equals(offerId, other.offerId)
-				&& Objects.equals(offerName, other.offerName)
-				&& Objects.equals(preclosureCharges, other.preclosureCharges);
 	}
 
 	@Override

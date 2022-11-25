@@ -1,9 +1,11 @@
 package com.service.banking.controller;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.service.banking.exception.BankAccIdNotFoundException;
 import com.service.banking.model.Offer;
 import com.service.banking.service.OfferService;
 
@@ -61,51 +64,19 @@ public class OfferController {
 		return ResponseEntity.ok().body(finalOffers);
 	}
 	
-//	@PostMapping("/credit-card")
-//	public ResponseEntity<Offer> getCreditCardOffer(@RequestBody BankAccount bankAcc) {
-//		float bankAccBal = bankAcc.getAccBal();
-//		Long accCreatedMillisLong = DateFormatterUtil.convertDateStringToMillisLong(bankAcc.getAccCreationDate());
-//		Long currentDateMilissLong = DateFormatterUtil.currentDateInLong();
-//		Long accCreatedDuration = currentDateMilissLong - accCreatedMillisLong;
-////		System.out.println("created: " + accCreatedMillisLong);
-////		System.out.println("current: " + currentDateMilissLong);
-////		System.out.println("difference: " + accCreatedDuration);
-//		Long tenYearMilliS = 315569260000l;
-//		Long fiveYearMilliS = 157784630000l;
-//		Offer offerRes = new Offer(null, "Credit Card", null, null, null, null, null, null);
-//		float annualFee;
-//		
-//		if(bankAccBal >= 10000f) {
-//			annualFee = 50f;
-//		} else if(bankAccBal >= 7000f) {
-//			annualFee = 60f;
-//		} else {
-//			annualFee = 100f;
-//		}
-//		offerRes.setAnnualFee(annualFee);
-//		
-//		float interestRatePercent;
-//		if(accCreatedDuration >= tenYearMilliS) {
-//			interestRatePercent = 6f;
-//		} else if(accCreatedDuration >= fiveYearMilliS) {
-//			interestRatePercent = 7f;
-//		} else {
-//			interestRatePercent = 10f;
-//		}
-//		offerRes.setInterestRatePercent(interestRatePercent);
-//		
-//		float interestFreeWithdrawal;
-//		if(bankAccBal >= 10000f && accCreatedDuration >= tenYearMilliS) {
-//			interestFreeWithdrawal = 1000f;
-//		} else if(bankAccBal >= 5000f && accCreatedDuration >= fiveYearMilliS) {
-//			interestFreeWithdrawal = 500f;
-//		} else {
-//			interestFreeWithdrawal = 200f;
-//		}
-//		offerRes.setInterestFreeCashWithdrawal(interestFreeWithdrawal);
-//		
-//		return ResponseEntity.ok().body(offerRes);
-//	}
+	@GetMapping("/credit-card/{bankAccId}")
+	public ResponseEntity<?> getCreditCardOffer(@PathVariable Long bankAccId) {
+		
+		try {
+			return ResponseEntity.ok(offerService.getCreditCard(bankAccId));
+		} catch (BankAccIdNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Something is wrong with the account balance.");
+		}
+	}
 //	
 //	@PostMapping("/home-loan")
 //	public ResponseEntity<Offer> getHomeLoanOffer(@RequestBody User user) {
