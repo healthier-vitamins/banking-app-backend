@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.service.banking.exception.BankAccIdNotFoundException;
 import com.service.banking.model.Offer;
+import com.service.banking.service.BankAccountService;
 import com.service.banking.service.OfferService;
 
 @RestController
@@ -27,6 +28,9 @@ public class OfferController {
 
 	@Autowired
 	private OfferService offerService;
+	
+	@Autowired
+	private BankAccountService bankAccService;
 	
 //	multiple hasAnyRoles
 //	https://stackoverflow.com/questions/57247649/multiple-roles-using-preauthorize
@@ -62,6 +66,18 @@ public class OfferController {
 			}
 		}
 		return ResponseEntity.ok().body(finalOffers);
+	}
+	
+	@GetMapping("/get-custid/{bankAccId}")
+	public ResponseEntity<?> getCustId(@PathVariable Long bankAccId) {
+		Long custId;
+		try {
+			custId = bankAccService.getBankAccountById(bankAccId).getCustomer().getCustId();
+		} catch (BankAccIdNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
+		}
+		return ResponseEntity.ok(custId);
 	}
 	
 	@GetMapping("/credit-card/{bankAccId}")

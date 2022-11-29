@@ -2,6 +2,7 @@ package com.service.banking.service;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,13 @@ import com.service.banking.utility.DateFormatterUtility;
 
 @Service
 public class OfferServiceImpl implements OfferService {
-	
+
 	@Autowired
 	private BankAccountService bankAccService;
-	
+
 	@Autowired
 	private OfferRepo offerRepo;
-	
+
 	@Override
 	public Offer save(Offer offer) {
 		return offerRepo.save(offer);
@@ -54,46 +55,12 @@ public class OfferServiceImpl implements OfferService {
 	public Offer getCreditCard(Long bankAccId) throws BankAccIdNotFoundException, ParseException {
 		BankAccount bankAcc = bankAccService.getBankAccountById(bankAccId);
 		return CreditCardUtility.getCreditCardOffer(bankAcc);
-		
-//		Long accCreatedMillisLong = DateFormatterUtility.convertDateStringToMillisLong(bankAcc.getAccCreationDate());
-//		Long currentDateMilissLong = DateFormatterUtility.currentDateInLong();
-//		Long accCreatedDuration = currentDateMilissLong - accCreatedMillisLong;
-		
-//		Offer offerRes = new Offer(null, "Credit Card", null, null, null, null, null, null);
-//		float annualFee;
-		
-//		if(bankAccBal >= 10000f) {
-//			annualFee = 50f;
-//		} else if(bankAccBal >= 7000f) {
-//			annualFee = 60f;
-//		} else {
-//			annualFee = 100f;
-//		}
-//		offerRes.setAnnualFee(annualFee);
-		
-//		float interestRatePercent;
-//		if(accCreatedDuration >= tenYearMilliS) {
-//			interestRatePercent = 6f;
-//		} else if(accCreatedDuration >= fiveYearMilliS) {
-//			interestRatePercent = 7f;
-//		} else {
-//			interestRatePercent = 10f;
-//		}
-//		offerRes.setInterestRatePercent(interestRatePercent);
-		
-//		float interestFreeWithdrawal;
-//		if(bankAccBal >= 10000f && accCreatedDuration >= tenYearMilliS) {
-//			interestFreeWithdrawal = 1000f;
-//		} else if(bankAccBal >= 5000f && accCreatedDuration >= fiveYearMilliS) {
-//			interestFreeWithdrawal = 500f;
-//		} else {
-//			interestFreeWithdrawal = 200f;
-//		}
-//		offerRes.setInterestFreeCashWithdrawal(interestFreeWithdrawal);
-//		
-//		return ResponseEntity.ok().body(offerRes);
-//		return null;
+
 	}
-	
-	
+
+	public Object hasCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException {
+		Optional<?> listOfOffers = Optional.of(bankAccService.getBankAccountById(bankAccId).getCustomer().getOffers());
+		return listOfOffers.get();
+	}
+
 }

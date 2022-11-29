@@ -14,4 +14,5 @@ public interface OfferService {
 	public Offer getByName(String name);
 	public List<Offer> getAll();
 	public Offer getCreditCard(Long bankAccId) throws BankAccIdNotFoundException, ParseException;
+	public Object hasCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException;
 }
