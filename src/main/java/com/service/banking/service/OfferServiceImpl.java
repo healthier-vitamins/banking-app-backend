@@ -63,7 +63,4 @@ public class OfferServiceImpl implements OfferService {
 		return listOfOffers.stream().anyMatch(offer -> offer.getOfferName().equalsIgnoreCase("Credit Card"));
 	}
 	
-	public Object getCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException {
-		return bankAccId;
-	}
 }
