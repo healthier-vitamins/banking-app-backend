@@ -58,9 +58,12 @@ public class OfferServiceImpl implements OfferService {
 
 	}
 
-	public Object hasCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException {
-		Optional<?> listOfOffers = Optional.of(bankAccService.getBankAccountById(bankAccId).getCustomer().getOffers());
-		return listOfOffers.get();
+	public Boolean hasCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException {
+		List<Offer> listOfOffers = bankAccService.getBankAccountById(bankAccId).getCustomer().getOffers();
+		return listOfOffers.stream().anyMatch(offer -> offer.getOfferName().equalsIgnoreCase("Credit Card"));
 	}
-
+	
+	public Object getCreditCardOffer(Long bankAccId) throws BankAccIdNotFoundException {
+		return bankAccId;
+	}
 }

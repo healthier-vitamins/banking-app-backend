@@ -93,6 +93,19 @@ public class OfferController {
 			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Something is wrong with the account balance.");
 		}
 	}
+	
+	@GetMapping("/has-credit-card/{bankAccId}")
+	public ResponseEntity<?> hasCreditCardOffer(@PathVariable Long bankAccId) {
+		try {
+			return ResponseEntity.ok(offerService.hasCreditCardOffer(bankAccId));
+		} catch (BankAccIdNotFoundException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bank account id does not exist.");
+		}
+	}
+	
+	
+	
 //	
 //	@PostMapping("/home-loan")
 //	public ResponseEntity<Offer> getHomeLoanOffer(@RequestBody User user) {
